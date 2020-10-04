@@ -94,6 +94,13 @@ def pretty_print(all_contexts):
 def sort_by_frequency(single_context):
     return sorted(single_context.items(), key=lambda x: x[1], reverse=True)
 
+def pretty_print_to_file(all_contexts):
+    f = open('result.txt', 'w')
+    for key in sorted(all_contexts.keys()):
+        sorted_context = sort_by_frequency(all_contexts[key])
+        print(key + ': ' + str(sorted_context[0:5]), file=f)
+    
+    f.close()
 
 #
 # Main method
