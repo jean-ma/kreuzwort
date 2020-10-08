@@ -6,6 +6,8 @@ from text_sample import die_verwandlung
 # calculate a context for each word of the text received as input
 #
 CONTEXT_SIZE = 3
+
+
 def get_word_to_context(text_to_analyze):
     # context is a mapping of word -> context
     # example: [
@@ -26,6 +28,7 @@ def get_word_to_context(text_to_analyze):
 
     return context
 
+
 def get_text_as_array_of_words(text_to_split: str):
     """
     example:
@@ -42,6 +45,7 @@ def get_text_as_array_of_words(text_to_split: str):
     """
     pattern = re.compile('\w+')
     return re.findall(pattern, text_to_split)
+
 
 def get_local_context(text_array, iterator):
     """
@@ -61,6 +65,7 @@ def get_local_context(text_array, iterator):
             word_context = merge_in_larger_context(word_context, local_context, word)
 
     return word_context
+
 
 def merge_in_larger_context(larger_context, local_context, word):
     """ 
@@ -83,6 +88,7 @@ def merge_in_larger_context(larger_context, local_context, word):
 
     return larger_context
 
+
 #
 # Pretty print methods
 #
@@ -91,16 +97,19 @@ def pretty_print(all_contexts):
         sorted_context = sort_by_frequency(all_contexts[key])
         print(key + ': ' + str(sorted_context[0:5]))
 
+
 def sort_by_frequency(single_context):
     return sorted(single_context.items(), key=lambda x: x[1], reverse=True)
+
 
 def pretty_print_to_file(all_contexts):
     f = open('result.txt', 'w')
     for key in sorted(all_contexts.keys()):
         sorted_context = sort_by_frequency(all_contexts[key])
         print(key + ': ' + str(sorted_context[0:5]), file=f)
-    
+
     f.close()
+
 
 #
 # Main method
