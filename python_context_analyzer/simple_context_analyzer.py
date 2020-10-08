@@ -1,4 +1,5 @@
-import re
+import spacy
+
 from text_sample import die_verwandlung
 
 # The context of a word is defined as the 3 words that preceed it + 3 words that follow it
@@ -6,6 +7,20 @@ from text_sample import die_verwandlung
 # calculate a context for each word of the text received as input
 #
 CONTEXT_SIZE = 3
+
+
+class TokenArray:
+    def __init__(self, token_array):
+        self.token_array = token_array
+
+    def get_text_at(self, index):
+        return self.token_array[index].lemma_
+
+    def get_token_at(self, index):
+        return self.token_array[index]
+
+    def get_len(self):
+        return len(self.token_array)
 
 
 def get_word_to_context(text_to_analyze):
@@ -18,48 +33,30 @@ def get_word_to_context(text_to_analyze):
     #   übrigens: [('er', 3), ('war', 2), ('hinausfliegen', 1), ('Wer', 1), ('weiß', 1)],
     #   ]
     context = dict()
-    text_array = get_text_as_array_of_words(text_to_analyze)
-    text_size = len(text_array)
+    nlp = spacy.load('de_core_news_md')
+    text_array = TokenArray([token for token in nlp(text_to_analyze) if not token.is_stop and token.is_alpha])
+    text_size = text_array.get_len()
 
     for iterator in range(0, text_size):
-        word = text_array[iterator]
         local_context = get_local_context(text_array, iterator)
-        merge_in_larger_context(context, local_context, word)
+        merge_in_larger_context(context, local_context, text_array.get_text_at(iterator))
 
     return context
 
 
-def get_text_as_array_of_words(text_to_split: str):
-    """
-    example:
-        from
-        \"""
-        Franz Kafka:
-        DIE VERWANDLUNG
-        I.
-        ALS Gregor Samsa eines Morgens aus unruhigen
-        \"""
-        to
-        ['Franz', 'Kafka', 'DIE', 'VERWANDLUNG', 'I', 'ALS', 'Gregor', 'Samsa', 'eines',
-        'Morgens', 'aus', 'unruhigen']
-    """
-    pattern = re.compile('\w+')
-    return re.findall(pattern, text_to_split)
-
-
-def get_local_context(text_array, iterator):
+def get_local_context(text_array: TokenArray, iterator):
     """
     example:
         ['', '', '']
     """
-    text_size = len(text_array)
-    word = text_array[iterator]
+    text_size = text_array.get_len()
+    word = text_array.get_text_at(iterator)
     context_start = max(0, iterator - CONTEXT_SIZE)
     context_end = min(text_size, iterator + CONTEXT_SIZE)
     word_context = dict()
 
     for i in range(context_start, context_end):
-        neighbor_word = text_array[i]
+        neighbor_word = text_array.get_text_at(i)
         if neighbor_word != word:
             local_context = {word: {neighbor_word: 1}}
             word_context = merge_in_larger_context(word_context, local_context, word)
@@ -103,7 +100,7 @@ def sort_by_frequency(single_context):
 
 
 def pretty_print_to_file(all_contexts):
-    f = open('result.txt', 'w')
+    f = open('result_for_die_verwandlung.txt', 'w')
     for key in sorted(all_contexts.keys()):
         sorted_context = sort_by_frequency(all_contexts[key])
         print(key + ': ' + str(sorted_context[0:5]), file=f)
@@ -117,3 +114,4 @@ def pretty_print_to_file(all_contexts):
 if __name__ == '__main__':
     all_contexts = get_word_to_context(die_verwandlung)
     pretty_print(all_contexts)
+    # pretty_print_to_file(all_contexts)
