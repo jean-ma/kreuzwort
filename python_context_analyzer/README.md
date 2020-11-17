@@ -4,4 +4,15 @@ Calculate the context of words. Hopefully it will help to decide which word shou
 
 ## Definition of a context
 
-Here the context of a word W is defined as the three words preceeding W + the three words following it.
+Here the context of a word W is defined as the three words preceeding W + the three words following it. That is: a window of six words centered on W.
+
+## Result
+
+The algorithm has been applied to the german text "Die Verwandlung" the result can be seen in `result_for_die_verwandlung.txt`.
+
+It doesn't seem useful. The context are mostly made of words with one single occurence. This makes it difficult to consider them as a usual context.
+
+Improvement could be obtained through
+- increasing the window size,
+- using a larger text or many texts
+- trying word embeddings
