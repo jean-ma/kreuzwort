@@ -16,3 +16,11 @@ Improvement could be obtained through
 - increasing the window size,
 - using a larger text or many texts
 - trying word embeddings
+
+# Run
+You need to install python [[link](https://www.python.org/downloads/)] and pipenv [[link](https://pipenv.pypa.io/en/latest/)]
+
+Then in command line
+```commandline
+pipenv run python simple_context_analyzer.py
+```
